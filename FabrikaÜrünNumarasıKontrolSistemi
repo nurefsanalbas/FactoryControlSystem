@@ -1,0 +1,108 @@
+package proje1;
+
+import java.util.Scanner;
+
+public class Proje1 {
+
+    public static long stringiCevir(String girilenSayi) { // inte çevirme kodu testlerimi ödev açıklamasındaki sayıya göre yaptım ve int bu sayı tipi için boyut olarak küçük kaldığından long kullandım
+
+        long sonuc = 0;
+        long basamak = 1;
+        for (int i = girilenSayi.length() - 1; i >= 0; i--) {
+            sonuc += (girilenSayi.charAt(i) - '0') * basamak;
+            basamak *= 10;
+        }
+        return sonuc;
+    }
+
+    public static int uzunlukBul(String girilenSayi) {//stringi numerik değere çevirdiğim için burada kullanıcıdan aldığım sayının lengthini alıp uzunluk buldum.
+        int sonuc = girilenSayi.length();
+        return sonuc;
+    }
+
+    public static void urunKoduİslemi(char secenek) {
+        do {
+            System.out.print("Ürün numarasını giriniz:"); // bu adımda ürün kodu string tipinde kullanıcıdan aldım
+            Scanner scan = new Scanner(System.in);
+            String urunCode = scan.next();
+
+            long kullaniciSayi = stringiCevir(urunCode);// kullanıcıdan aldığım sayıyı yukarıda yazdığım stringi numerice çevirme metoduna soktum ve çıkan değer long tipinde olduğundan long değere atadım.
+            boolean karakterKontrol = false;
+
+            System.out.println(kullaniciSayi);
+            int kullaniciUzunluk = uzunlukBul(urunCode);//uzunluk bulma metodunu kullanarak kullanıcının girdiği sayının uzunluğunu alıp int tipinde değişkene attım.
+            for (int i = 0; i <= kullaniciUzunluk; i++) {
+                if (i < kullaniciUzunluk) {
+
+                    if (urunCode.charAt(i) == '0' || urunCode.charAt(i) == '1' || urunCode.charAt(i) == '2' || urunCode.charAt(i) == '3' || urunCode.charAt(i) == '4' || urunCode.charAt(i) == '5' || urunCode.charAt(i) == '6' || urunCode.charAt(i) == '7' || urunCode.charAt(i) == '8' || urunCode.charAt(i) == '9') {
+                        karakterKontrol = true;
+                    } else {
+                        karakterKontrol = false;
+                    }
+                }
+            }
+            if (kullaniciUzunluk != 16 || !karakterKontrol) {
+                System.out.println("Eksik ya da hatalı ürün numarası");
+                System.out.println("Tekrar dene (T)");
+                System.out.println("Ana menü (A)");
+                secenek = scan.next().charAt(0);
+            } else {
+                int birinciDigit = 0, ikinciDigit = 0, ucuncuDigit = 0, dorduncuDigit = 0;//4erli gruplar halinde digitler üzerinde işlem yapacağımızdan dolayı dört digit tanımladım.
+                String carpimDigit = "";//digitlerin 2 katının alınmış halini yazdırmak için böyle bir değişken oluşturdum
+                String boslukluDigit = "";// kullanıcıdan aldığım hesaplanmış sayıyı yazdırmak için böyle bir değişken oluşturdum
+                int toplamDigit = 0; //digit toplamını bulmak için toplamDigit adında bir değişken oluşturup ilk degerini etkisiz olması için 0 atadım 
+                for (int i = 0; i <= kullaniciUzunluk; i += 4) {// i kullacıdan aldığım sayının boyutudan küçük oldugu sürece bu diziyi döndürdüm ve her defasında i yi 4 arttırdım
+                    //çünkü 16 tane digit tanımı yapmak istemedim 
+                    if (i < kullaniciUzunluk) {//bu koşulu koymadığım zaman exception oluştu bu yüzden tekrar bu koşulu ekledim
+                        birinciDigit = (urunCode.charAt(i) - '0') * 2;//charAt(i) yaparak birinci digiti elde edemedim -'0' eklemem gerektiğini internetten buldum.
+                        ikinciDigit = urunCode.charAt(i + 1) - '0';
+                        ucuncuDigit = (urunCode.charAt(i + 2) - '0') * 2;//1. ve 3. digitlerin 2 katını aldım
+                        dorduncuDigit = urunCode.charAt(i + 3) - '0';
+                        if (birinciDigit > 9) {//1. digit 9 dan büyükse çarpım sonucundan çıkardım
+                            birinciDigit = birinciDigit - 9;
+                        }
+                        if (ucuncuDigit > 9) {//3. digit 9 dan büyükse çarpım sonucundan çıkardım
+                            ucuncuDigit = ucuncuDigit - 9;
+                        }
+                        carpimDigit = birinciDigit + "" + ikinciDigit + "" + ucuncuDigit + "" + dorduncuDigit + " ";//çıktı kısmında çarpılmış haldeki sonuç değerini yazdırmak için bu şekilde bir yol izledim
+                        boslukluDigit = boslukluDigit + carpimDigit;//çıktı kısmında boşluklu haldeki değeri yazdırmak için bu şekilde ekledim
+                        toplamDigit = toplamDigit + birinciDigit + ikinciDigit + ucuncuDigit + dorduncuDigit;//tüm basamakları toplayıp toplamDigite atadım
+                    }
+                }
+
+                System.out.println("Digitlerin iki katının hesaplanmis hali : " + boslukluDigit);
+                System.out.println("Digitler toplami: " + toplamDigit);
+                if (toplamDigit % 10 == 0) {//toplam sonucu 10a bölünüyor mu diye kontrol ettim.
+                    System.out.println(toplamDigit + " sayisi geçerlidir");
+                } else {
+                    System.out.println(toplamDigit + "sayisi 10 a tam bolunemedigi icin gecersizdir. ");
+                }
+            }
+        } while (secenek == 'T' || secenek == 't');
+
+    }
+
+    public static void main(String[] args) {
+
+        Scanner scan = new Scanner(System.in);
+        char secenek = ' ';
+
+        System.out.println("**********Ürün numarası kontrol etme uygulamasına hoşgeldiniz**********");
+
+        do {
+            System.out.println("Ürün Numarasını Test Et(T)");
+            System.out.println("Çıkış(C)");
+            System.out.println("Seçenek:");
+            secenek = scan.next().charAt(0); //kullanıcının girdiği karakteri tanıması için charAt(0) verdim, bunu internetten araştırdım.
+
+            if (secenek == 'T' || secenek == 't') {//kullanıcının karakteri büyük ya da küçük harfle girme durumunu ele aldım
+                urunKoduİslemi(secenek);
+            } else if (secenek != 'C') {//bilinmeyen komut
+                System.out.println("Geçerli bir harf girmediniz."); 
+            }
+        } while (secenek != 'C' || secenek != 'c');// girilen seçenek C ise program sonlanacak
+
+        System.out.println("İyi Günler...");
+    }
+
+}
